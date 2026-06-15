@@ -1,0 +1,25 @@
+node_modules/
+.env
+.DS_Store
+dist/
+build/
+*.log
+
+# ML training image datasets (large binary files)
+crop-advisory-system/ml-backend/
+ml-backend/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.pkl
+*.h5
+*.pt
+*.pth
+
+# IDE
+.vscode/
+.idea/

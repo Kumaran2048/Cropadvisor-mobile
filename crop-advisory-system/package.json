@@ -1,0 +1,17 @@
+{
+    "name": "crop-advisory-system",
+    "version": "1.0.0",
+    "description": "AI-Based Crop Advisory & Farm Management System",
+    "scripts": {
+        "install:all": "npm install --prefix crop-frontend && npm install --prefix crop-advisory-backend/crop-advisory/server",
+        "dev:frontend": "npm start --prefix crop-frontend",
+        "dev:backend": "npm run dev --prefix crop-advisory-backend/crop-advisory/server",
+        "dev:ml": "cd crop-advisory-backend/crop-advisory/ml-service && python app.py",
+        "build": "npm install && npm run install:all",
+        "dev": "concurrently \"npm run dev --prefix crop-advisory-backend/crop-advisory/server\" \"npm run web --prefix crop-frontend\"",
+        "start": "npm start --prefix crop-advisory-backend/crop-advisory/server"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}
