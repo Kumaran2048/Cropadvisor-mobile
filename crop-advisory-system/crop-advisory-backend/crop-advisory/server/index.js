@@ -3,6 +3,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
+const { apmMiddleware, getApmStats } = require("./middleware/apmMiddleware");
 
 // Load env variables
 dotenv.config();
@@ -11,6 +12,9 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
+// ── APM Middleware (First in Chain) ──────────────────
+app.use(apmMiddleware);
 
 // ── Middleware ──────────────────────────────────────
 app.use(morgan("dev"));
@@ -46,6 +50,16 @@ app.use("/api/ml", require("./routes/mlRoutes"));
 // ── Health Check ────────────────────────────────────
 app.get("/", (req, res) => {
   res.json({ message: "Crop Advisory API is running ✅" });
+});
+
+// ── APM stats ───────────────────────────────────────
+app.get("/api/apm/stats", (req, res) => {
+  res.json({
+    status: "Healthy",
+    api: "Crop Advisory API ✅",
+    timestamp: new Date(),
+    apm: getApmStats(),
+  });
 });
 
 // ── Global Error Handler ────────────────────────────
