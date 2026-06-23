@@ -9,7 +9,9 @@
         "dev:ml": "cd crop-advisory-backend/crop-advisory/ml-service && python app.py",
         "build": "npm install && npm run install:all",
         "dev": "concurrently \"npm run dev --prefix crop-advisory-backend/crop-advisory/server\" \"npm run web --prefix crop-frontend\"",
-        "start": "npm start --prefix crop-advisory-backend/crop-advisory/server"
+        "start": "npm start --prefix crop-advisory-backend/crop-advisory/server",
+        "test": "npm run test --prefix crop-advisory-backend/crop-advisory/server",
+        "test:appium": "npm run test:appium --prefix crop-frontend"
     },
     "devDependencies": {
         "concurrently": "^8.2.2"

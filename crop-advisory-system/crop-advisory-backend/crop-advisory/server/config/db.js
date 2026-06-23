@@ -44,31 +44,33 @@ const connectDB = async (forceSync = false) => {
     console.log("MySQL Connected successfully ✅");
 
     // Define Associations
-    // User <-> FarmProfile
-    User.hasOne(FarmProfile, { foreignKey: "userId", sourceKey: "_id", as: "farmProfile" });
-    FarmProfile.belongsTo(User, { foreignKey: "userId", targetKey: "_id", as: "user" });
+    if (!User.associations || !User.associations.farmProfile) {
+      // User <-> FarmProfile
+      User.hasOne(FarmProfile, { foreignKey: "userId", sourceKey: "_id", as: "farmProfile" });
+      FarmProfile.belongsTo(User, { foreignKey: "userId", targetKey: "_id", as: "user" });
 
-    // FarmProfile -> Crop (activeCrop)
-    FarmProfile.belongsTo(Crop, { foreignKey: "activeCropId", targetKey: "_id", as: "activeCropDetails" });
+      // FarmProfile -> Crop (activeCrop)
+      FarmProfile.belongsTo(Crop, { foreignKey: "activeCropId", targetKey: "_id", as: "activeCropDetails" });
 
-    // Alert -> User
-    Alert.belongsTo(User, { foreignKey: "farmerId", targetKey: "_id", as: "farmer" });
-    Alert.belongsTo(User, { foreignKey: "officerId", targetKey: "_id", as: "officer" });
+      // Alert -> User
+      Alert.belongsTo(User, { foreignKey: "farmerId", targetKey: "_id", as: "farmer" });
+      Alert.belongsTo(User, { foreignKey: "officerId", targetKey: "_id", as: "officer" });
 
-    // DiseaseReport -> User, Crop
-    DiseaseReport.belongsTo(User, { foreignKey: "farmerId", targetKey: "_id", as: "farmer" });
-    DiseaseReport.belongsTo(Crop, { foreignKey: "cropId", targetKey: "_id", as: "cropIdDetails" });
+      // DiseaseReport -> User, Crop
+      DiseaseReport.belongsTo(User, { foreignKey: "farmerId", targetKey: "_id", as: "farmer" });
+      DiseaseReport.belongsTo(Crop, { foreignKey: "cropId", targetKey: "_id", as: "cropIdDetails" });
 
-    // Expense -> User, Crop
-    Expense.belongsTo(User, { foreignKey: "farmerId", targetKey: "_id", as: "farmer" });
-    Expense.belongsTo(Crop, { foreignKey: "cropId", targetKey: "_id", as: "cropIdDetails" });
+      // Expense -> User, Crop
+      Expense.belongsTo(User, { foreignKey: "farmerId", targetKey: "_id", as: "farmer" });
+      Expense.belongsTo(Crop, { foreignKey: "cropId", targetKey: "_id", as: "cropIdDetails" });
 
-    // YieldLog -> User, Crop
-    YieldLog.belongsTo(User, { foreignKey: "farmerId", targetKey: "_id", as: "farmer" });
-    YieldLog.belongsTo(Crop, { foreignKey: "cropId", targetKey: "_id", as: "cropIdDetails" });
+      // YieldLog -> User, Crop
+      YieldLog.belongsTo(User, { foreignKey: "farmerId", targetKey: "_id", as: "farmer" });
+      YieldLog.belongsTo(Crop, { foreignKey: "cropId", targetKey: "_id", as: "cropIdDetails" });
 
-    // DailyTask -> User
-    DailyTask.belongsTo(User, { foreignKey: "userId", targetKey: "_id", as: "user" });
+      // DailyTask -> User
+      DailyTask.belongsTo(User, { foreignKey: "userId", targetKey: "_id", as: "user" });
+    }
 
     // Sync database models with MySQL database tables
     const shouldReset = forceSync || process.env.DB_RESET === "true";

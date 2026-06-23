@@ -8,7 +8,8 @@
     "dev": "nodemon index.js",
     "test:api": "node tests/api-integration.test.js",
     "test:perf": "node tests/apm-performance.test.js",
-    "test": "node tests/api-integration.test.js && node tests/apm-performance.test.js"
+    "test:comprehensive": "node tests/comprehensive.test.js",
+    "test": "node tests/comprehensive.test.js"
   },
   "dependencies": {
     "axios": "^1.6.0",

@@ -1,0 +1,90 @@
+name: Appium — Android Tests (205)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: sachshiv
+          MYSQL_DATABASE: cropadvisor
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install dependencies (Server)
+      run: |
+        cd crop-advisory-system/crop-advisory-backend/crop-advisory/server
+        npm ci
+
+    - name: Create .env file for Testing
+      run: |
+        cat <<EOF > crop-advisory-system/crop-advisory-backend/crop-advisory/server/.env
+        PORT=5002
+        DB_HOST=127.0.0.1
+        DB_PORT=3306
+        DB_USER=root
+        DB_PASSWORD=sachshiv
+        DB_NAME=cropadvisor
+        JWT_SECRET=cropAdvisorySecretKey2024
+        JWT_EXPIRE=7d
+        OPENWEATHER_API_KEY=mock_openweather_api_key
+        FLASK_URL=https://pdd-2-d89r.onrender.com
+        AGMARKNET_API_KEY=mock_agmarknet_api_key
+        SMTP_HOST=smtp.gmail.com
+        SMTP_PORT=587
+        SMTP_USER=mock_smtp_user@gmail.com
+        SMTP_PASS=mock_smtp_password
+        TWILIO_ACCOUNT_SID=
+        TWILIO_AUTH_TOKEN=
+        TWILIO_PHONE_NUMBER=
+        EOF
+
+    - name: Run 205 APM & Integration Tests
+      run: |
+        cd crop-advisory-system/crop-advisory-backend/crop-advisory/server
+        npm test
+
+    - name: Start CropAdvisor server
+      run: |
+        cd crop-advisory-system/crop-advisory-backend/crop-advisory/server
+        nohup npm start > server.log 2>&1 &
+
+    - name: Wait for server ready
+      run: |
+        until curl -s http://localhost:5002/; do
+          echo "Waiting for server to start on port 5002..."
+          sleep 1
+        done
+
+    - name: Run Appium Android Tests (205 cases)
+      run: |
+        cd crop-advisory-system/crop-frontend
+        npm run test:appium
+
+    - name: Upload Appium CSV Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: appium-android-tests-report
+        path: crop-advisory-system/crop-frontend/appium-report.csv
